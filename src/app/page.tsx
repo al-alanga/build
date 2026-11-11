@@ -46,7 +46,7 @@ export default function HomePage() {
       <section className="main-panel" id="visao-geral">
         <header className="topbar">
           <div className="breadcrumb">ObraCerta <span>/</span> <strong>Visão geral</strong></div>
-          <div className="topbar-right"><span className="currency-chip">MZN · Metical</span><span className="user-chip">OC</span></div>
+          <div className="topbar-right"><a className="currency-chip" href="/acesso">Aceder / criar conta</a><span className="currency-chip">MZN · Metical</span><span className="user-chip">OC</span></div>
         </header>
 
         <div className="content">
