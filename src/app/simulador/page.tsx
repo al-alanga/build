@@ -21,7 +21,7 @@ function RateInput({ label, value, onChange }: { label: string; value: number; o
           max="100"
           step="0.5"
           value={value}
-          onChange={(event) => onChange(Number(event.target.value))}
+          onChange={(event) => onChange(Math.min(100, Math.max(0, Number(event.target.value) || 0)))}
         />
         <span>%</span>
       </div>
