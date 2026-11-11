@@ -19,7 +19,7 @@ describe("createProjectSchema", () => {
 
   it("rejects a missing code and unsupported currency length", () => {
     expect(createProjectSchema.safeParse({ name: "Obra de teste" }).success).toBe(false);
-    expect(createProjectSchema.safeParse({ code: "OB-03", name: "Obra válida", currency: "MET" }).success).toBe(false);
+    expect(createProjectSchema.safeParse({ code: "OB-03", name: "Obra válida", currency: "MZNX" }).success).toBe(false);
   });
 
   it("accepts optional text fields as empty and normalizes them", () => {
