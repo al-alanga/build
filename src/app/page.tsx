@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const metrics = [
   { label: "Obras activas", value: "—", note: "Ligue a base de dados para carregar obras", icon: "▦" },
   { label: "Orçamento total", value: "— MZN", note: "Sem dados registados", icon: "↗" },
@@ -16,18 +18,18 @@ export default function HomePage() {
   return (
     <main className="app-shell">
       <aside className="sidebar">
-        <a className="brand" href="/" aria-label="ObraCerta página inicial">
+        <Link className="brand" href="/" aria-label="ObraCerta página inicial">
           <span className="brand-mark">O</span>
           <span><strong>ObraCerta</strong><small>GESTÃO DE OBRAS</small></span>
-        </a>
+        </Link>
         <div className="workspace-label">ESPAÇO DE TRABALHO</div>
         <nav className="navigation" aria-label="Navegação principal">
-          <a className="nav-item active" href="#visao-geral"><span>▦</span> Visão geral</a>
-          <a className="nav-item" href="/obras"><span>▤</span> Obras</a>
-          <a className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</a>
-          <a className="nav-item" href="#orcamentos"><span>▧</span> Orçamentos <em>Em breve</em></a>
-          <a className="nav-item" href="/recursos"><span>◫</span> Recursos e fornecedores</a>
-          <a className="nav-item" href="#relatorios"><span>▥</span> Relatórios <em>Em breve</em></a>
+          <Link className="nav-item active" href="#visao-geral"><span>▦</span> Visão geral</Link>
+          <Link className="nav-item" href="/obras"><span>▤</span> Obras</Link>
+          <Link className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</Link>
+          <Link className="nav-item" href="#orcamentos"><span>▧</span> Orçamentos <em>Em breve</em></Link>
+          <Link className="nav-item" href="/recursos"><span>◫</span> Recursos e fornecedores</Link>
+          <Link className="nav-item" href="#relatorios"><span>▥</span> Relatórios <em>Em breve</em></Link>
         </nav>
         <div className="sidebar-bottom">
           <div className="setup-card">
@@ -46,7 +48,7 @@ export default function HomePage() {
       <section className="main-panel" id="visao-geral">
         <header className="topbar">
           <div className="breadcrumb">ObraCerta <span>/</span> <strong>Visão geral</strong></div>
-          <div className="topbar-right"><a className="currency-chip" href="/acesso">Aceder / criar conta</a><span className="currency-chip">MZN · Metical</span><span className="user-chip">OC</span></div>
+          <div className="topbar-right"><Link className="currency-chip" href="/acesso">Aceder / criar conta</Link><span className="currency-chip">MZN · Metical</span><span className="user-chip">OC</span></div>
         </header>
 
         <div className="content">
@@ -56,7 +58,7 @@ export default function HomePage() {
               <h1>Visão geral</h1>
               <p className="welcome-copy">Uma base organizada para orçamentar e acompanhar os custos das suas obras.</p>
             </div>
-            <a className="primary-button" href="/simulador">Abrir simulador de custos <span className="button-soon">experimental</span></a>
+            <Link className="primary-button" href="/simulador">Abrir simulador de custos <span className="button-soon">experimental</span></Link>
           </section>
 
           <section className="notice" aria-label="Estado da aplicação">
