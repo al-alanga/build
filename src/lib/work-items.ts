@@ -26,7 +26,6 @@ export async function listWorkItems(companyId: string, projectId: string) {
     select: {
       id: true, projectId: true, parentId: true, code: true, name: true,
       description: true, unit: true, quantity: true, sortOrder: true,
-      createdAt: true, updatedAt: true,
     },
   });
 }
