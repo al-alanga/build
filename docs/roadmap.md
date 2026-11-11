@@ -5,10 +5,13 @@
 - [x] Criar esquema inicial do domínio.
 - [x] Criar motor de cálculo isolado.
 - [x] Adicionar testes unitários iniciais.
-- [ ] Instalar dependências e executar testes/build em ambiente real.
+- [x] Adicionar workflow de CI para validar schema, testes, lint e build automaticamente.
+- [ ] Instalar dependências e confirmar resultados do CI.
 
 ## Fase 1 — Acesso e obras
 - [ ] Autenticação segura e recuperação de conta.
+- [x] Definir matriz inicial de permissões por papel.
+- [x] Criar esquemas de validação para dados de obra e itens EAP.
 - [ ] Empresas, membros, papéis e permissões no servidor.
 - [ ] CRUD de obras e hierarquia EDT/EAP.
 - [ ] Medições, revisões e histórico.
