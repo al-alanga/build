@@ -122,7 +122,7 @@ export default function ProjectDetailPage() {
           <span className={`detail-status detail-status-${project.status.toLowerCase()}`}>{statusLabels[project.status] || project.status}</span>
         </section>
         {message && <p className={isError ? "detail-alert error" : "detail-alert"} role="status">{message}{isError && message.includes("Sessão") ? <> <Link href="/acesso">Iniciar sessão</Link></> : null}</p>}
-        <div className="detail-budget-action"><Link href={`/obras/${projectId}/orcamento`}>Abrir mapa financeiro do orçamento →</Link></div>
+        <div className="detail-budget-action"><Link href={`/obras/${projectId}/orcamento`}>Abrir mapa financeiro do orçamento →</Link><Link href={`/obras/${projectId}/medicoes`}>Controlar medições de execução →</Link></div>
         <section className="detail-stats">
           <div><span>Itens da EAP</span><strong>{items.length}</strong></div>
           <div><span>Moeda do orçamento</span><strong>{project.currency}</strong></div>
