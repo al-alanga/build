@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 const optionalText = (max: number) =>
-  z.string().trim().max(max).optional().or(z.literal("").transform(() => undefined));
+  z.preprocess(
+    (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+    z.string().trim().max(max).optional(),
+  );
 
 const currency = z.string().trim().length(3).transform((value) => value.toUpperCase());
 
