@@ -24,11 +24,13 @@
 - [ ] Completar auditoria de todas as operações críticas.
 
 ## Fase 2 — Recursos e orçamento
-- [ ] Fornecedores, cotações e preços introduzidos pela empresa.
-- [ ] Recursos, produtividade e custos horários.
-- [ ] Composições de custo unitário versionadas.
-- [ ] Custos directos/indirectos e parâmetros de cálculo.
-- [ ] Simulação e aprovação imutável de revisões.
+- [x] Registo/listagem inicial de fornecedores e preços introduzidos pela empresa.
+- [x] Recursos com preços próprios, moeda e custos de importação/transporte/outros.
+- [x] Primeira versão de composições de custo unitário com preço congelado por versão.
+- [x] Motor isolado de cálculo de custo base, encargos gerais, lucro, imposto configurável e coeficiente K.
+- [ ] Cotações com histórico, produtividade e custos horários completos.
+- [ ] Integrar composições e motor de cálculo nas revisões de orçamento persistidas.
+- [ ] Fluxo de aprovação imutável de revisões.
 
 ## Fase 3 — Adaptação operacional a Moçambique
 - [ ] MZN como moeda base e moedas alternativas quando necessário.
