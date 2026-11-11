@@ -92,3 +92,36 @@ h1{font-size:29px;margin-bottom:7px;font-weight:800}
 @media(max-width:1150px){.sidebar{width:215px;flex-basis:215px}.content{padding:30px 25px 20px}.topbar{padding:0 25px}.metric-grid,.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-card{min-height:170px}}
 @media(max-width:760px){.app-shell{display:block}.sidebar{width:100%;min-height:auto;padding:15px 16px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 4px 14px}.workspace-label,.sidebar-bottom{display:none}.navigation{display:flex;overflow-x:auto}.nav-item{white-space:nowrap;padding:9px 11px}.nav-item em{display:none}.topbar{height:54px;padding:0 18px}.content{padding:25px 16px 18px}.welcome-row{align-items:flex-start;flex-direction:column}.primary-button{width:100%;justify-content:center}.metric-grid{gap:10px}.metric-card{padding:14px;min-height:120px}.metric-value{font-size:21px}.module-grid{gap:10px}.module-card{padding:14px;min-height:200px}.bottom-grid{grid-template-columns:1fr}.footer{flex-direction:column}.notice{padding:13px}.section-heading{align-items:flex-start;gap:10px}.section-count{padding-top:5px}}
 @media(max-width:390px){.metric-grid,.module-grid{grid-template-columns:1fr}.module-card{min-height:155px}.metric-card{min-height:105px}}
+
+
+/* Dashboard navigation and module visibility */
+.dashboard-content{max-width:1480px}
+.dashboard-quicklinks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0 30px}
+.dashboard-quicklinks>a{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px;transition:border-color .15s,transform .15s}
+.dashboard-quicklinks>a:hover{border-color:#b8d4c5;transform:translateY(-1px)}
+.quick-icon{display:grid;place-items:center;width:38px;height:38px;flex-shrink:0;background:#eef6f1;color:var(--green);border-radius:9px;font-size:20px}
+.dashboard-quicklinks strong,.dashboard-quicklinks small{display:block}
+.dashboard-quicklinks strong{font-size:12px}
+.dashboard-quicklinks small{font-size:10px;color:#84918b;margin-top:4px}
+.quick-arrow{margin-left:auto;color:#84918b}
+.dashboard-section-heading{margin-top:4px}
+.dashboard-module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.dashboard-module-card{min-height:220px}
+.dashboard-module-card h3{margin-top:10px}
+.dashboard-module-status{display:flex;align-items:center;gap:7px;color:#718078;font-size:10px}
+.dashboard-module-status .status-dot-warn{background:#d39b46}
+.dashboard-module-link{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #edf1ee;padding-top:12px;margin-top:auto;color:var(--green);font-size:11px;font-weight:700}
+.dashboard-module-link span{font-size:15px}
+.dashboard-bottom-grid{grid-template-columns:1.1fr .9fr}
+.dashboard-text-link{display:inline-block;color:var(--green);font-size:11px;font-weight:700;margin-top:16px}
+.roadmap-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #edf1ee}
+.roadmap-item:last-child{border-bottom:0}
+.roadmap-item>span{display:grid;place-items:center;flex:0 0 29px;height:29px;border-radius:7px;background:#f0f6f2;color:var(--green);font-size:10px;font-weight:800}
+.roadmap-item strong{font-size:11px}
+.roadmap-item p{font-size:10px;line-height:1.6;color:#7a8881;margin:5px 0 0}
+.dashboard-note{margin-top:16px;padding:15px 17px;border:1px solid #e7ece9;background:#fff;border-radius:9px}
+.dashboard-note strong{font-size:11px}
+.dashboard-note p{font-size:10px;line-height:1.7;color:#75837b;margin:6px 0 0}
+.dashboard-inline-link{display:inline-block;font-size:10px;font-weight:700;color:var(--green);margin-top:10px}
+@media(max-width:1100px){.dashboard-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-bottom-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.dashboard-quicklinks{grid-template-columns:1fr}.dashboard-module-grid{grid-template-columns:1fr}.dashboard-module-card{min-height:0}.dashboard-content{padding:24px 18px}.dashboard-content .welcome-row{align-items:flex-start;flex-direction:column}.dashboard-content .primary-button{white-space:normal}.dashboard-content h1{font-size:25px}.dashboard-quicklinks>a{padding:12px}}
