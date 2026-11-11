@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 const optionalTrimmed = (max: number) =>
-  z.string().trim().max(max).optional().or(z.literal("").transform(() => undefined));
+  z.preprocess(
+    (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+    z.string().trim().max(max).optional(),
+  );
 
 export const projectFieldsSchema = z.object({
   code: z.string().trim().min(1, "O código da obra é obrigatório.").max(40),
