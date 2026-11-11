@@ -1,17 +1,18 @@
 import Link from "next/link";
 
-const metrics = [
-  { label: "Obras activas", value: "—", note: "Ligue a base de dados para carregar obras", icon: "▦" },
-  { label: "Orçamento total", value: "— MZN", note: "Sem dados registados", icon: "↗" },
-  { label: "Em revisão", value: "—", note: "Revisões por aprovar", icon: "◷" },
-  { label: "Desvio de custos", value: "—", note: "Disponível na fase de execução", icon: "⌁" },
+const modules = [
+  { number: "01", title: "Obras e EAP", description: "Criar obras, definir cliente e localização, estruturar capítulos, actividades e serviços.", href: "/obras", action: "Abrir gestão de obras", status: "Disponível", icon: "▤" },
+  { number: "02", title: "Recursos e fornecedores", description: "Registar materiais, mão de obra, equipamentos, fornecedores e custos de importação/transporte.", href: "/recursos", action: "Abrir recursos", status: "Disponível", icon: "◫" },
+  { number: "03", title: "Composições de custos", description: "Associar recursos e coeficientes técnicos a cada serviço para obter o custo unitário.", href: "/obras", action: "Seleccionar uma obra", status: "Dentro da obra", icon: "∑" },
+  { number: "04", title: "Mapa financeiro e coeficiente K", description: "Consultar custos directos, simular indirectos, encargos, lucro e impostos configuráveis, guardar revisões.", href: "/obras", action: "Abrir uma obra e o orçamento", status: "Dentro da obra", icon: "▧" },
+  { number: "05", title: "Medições de execução", description: "Registar quantidades executadas, consultar histórico e comparar execução aprovada com orçamento.", href: "/obras", action: "Abrir uma obra e as medições", status: "Registo inicial disponível", icon: "✓" },
+  { number: "06", title: "Simulador de custos", description: "Experimentar cenários de cálculo sem começar pelo registo de uma obra completa.", href: "/simulador", action: "Abrir simulador", status: "Experimental", icon: "⌁" },
 ];
 
-const modules = [
-  { number: "01", title: "Obras e EAP", description: "Organize capítulos, actividades e serviços numa estrutura hierárquica.", status: "Módulo em construção" },
-  { number: "02", title: "Recursos e fornecedores", description: "Registe os seus materiais, mão de obra, equipamentos e cotações.", status: "Modelo inicial criado" },
-  { number: "03", title: "Composições de custos", description: "Calcule custos unitários a partir de coeficientes técnicos e preços próprios.", status: "Motor inicial criado" },
-  { number: "04", title: "Orçamento e coeficiente K", description: "Separe custos directos, indirectos, encargos, lucro e impostos configuráveis.", status: "Cálculo inicial criado" },
+const nextSteps = [
+  { title: "Aprovação de medições", description: "Submeter, aprovar ou rejeitar medições com permissões e registo de auditoria." },
+  { title: "Custos reais e compromissos", description: "Ligar compras, facturas e despesas à obra para calcular desvios face ao orçamento." },
+  { title: "Relatórios PDF e Excel avançados", description: "Gerar autos de medição e relatórios técnicos/financeiros formais." },
 ];
 
 export default function HomePage() {
@@ -19,29 +20,19 @@ export default function HomePage() {
     <main className="app-shell">
       <aside className="sidebar">
         <Link className="brand" href="/" aria-label="ObraCerta página inicial">
-          <span className="brand-mark">O</span>
-          <span><strong>ObraCerta</strong><small>GESTÃO DE OBRAS</small></span>
+          <span className="brand-mark">O</span><span><strong>ObraCerta</strong><small>GESTÃO DE OBRAS</small></span>
         </Link>
         <div className="workspace-label">ESPAÇO DE TRABALHO</div>
         <nav className="navigation" aria-label="Navegação principal">
-          <Link className="nav-item active" href="#visao-geral"><span>▦</span> Visão geral</Link>
-          <Link className="nav-item" href="/obras"><span>▤</span> Obras</Link>
-          <Link className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</Link>
-          <Link className="nav-item" href="#orcamentos"><span>▧</span> Orçamentos <em>Em breve</em></Link>
+          <Link className="nav-item active" href="/"><span>▦</span> Visão geral</Link>
+          <Link className="nav-item" href="/obras"><span>▤</span> Obras e EAP</Link>
           <Link className="nav-item" href="/recursos"><span>◫</span> Recursos e fornecedores</Link>
-          <Link className="nav-item" href="#relatorios"><span>▥</span> Relatórios <em>Em breve</em></Link>
+          <Link className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</Link>
+          <Link className="nav-item" href="/acesso"><span>↪</span> Conta e sessão</Link>
         </nav>
         <div className="sidebar-bottom">
-          <div className="setup-card">
-            <span className="setup-dot" />
-            <strong>Ambiente inicial</strong>
-            <p>Esta versão é a fundação do produto. Ainda não existem dados de obras.</p>
-          </div>
-          <div className="profile">
-            <div className="avatar">OC</div>
-            <div><strong>Espaço da empresa</strong><small>Configuração pendente</small></div>
-            <span className="profile-menu">···</span>
-          </div>
+          <div className="setup-card"><span className="setup-dot" /><strong>Como começar</strong><p>Crie uma obra. Depois registe a EAP, os recursos, as composições e o orçamento.</p><Link href="/obras" className="dashboard-inline-link">Começar pela primeira obra →</Link></div>
+          <div className="profile"><div className="avatar">OC</div><div><strong>ObraCerta</strong><small>Gestão de obras · MZN</small></div><span className="profile-menu">···</span></div>
         </div>
       </aside>
 
@@ -51,69 +42,54 @@ export default function HomePage() {
           <div className="topbar-right"><Link className="currency-chip" href="/acesso">Aceder / criar conta</Link><span className="currency-chip">MZN · Metical</span><span className="user-chip">OC</span></div>
         </header>
 
-        <div className="content">
+        <div className="content dashboard-content">
           <section className="welcome-row">
-            <div>
-              <p className="eyebrow">PAINEL DE CONTROLO</p>
-              <h1>Visão geral</h1>
-              <p className="welcome-copy">Uma base organizada para orçamentar e acompanhar os custos das suas obras.</p>
-            </div>
-            <Link className="primary-button" href="/simulador">Abrir simulador de custos <span className="button-soon">experimental</span></Link>
+            <div><p className="eyebrow">PAINEL DE CONTROLO</p><h1>Visão geral do ObraCerta</h1><p className="welcome-copy">Acompanhe os módulos implementados e aceda directamente a cada área do sistema.</p></div>
+            <Link className="primary-button" href="/obras">＋ Abrir gestão de obras</Link>
           </section>
 
-          <section className="notice" aria-label="Estado da aplicação">
-            <div className="notice-icon">i</div>
-            <div><strong>Bem-vindo à fundação do ObraCerta</strong><p>Já existem registo, sessão autenticada e APIs iniciais para obras, EAP, fornecedores e recursos. Configure a base de dados antes de usar dados reais; os indicadores abaixo ainda não estão ligados aos registos persistidos.</p></div>
+          <section className="notice" aria-label="Como navegar no sistema">
+            <div className="notice-icon">i</div><div><strong>O painel é o ponto de entrada — os módulos estão nas páginas próprias</strong><p>Para ver os dados e operações de cada obra, entre em “Obras e EAP”, abra uma obra e use os atalhos para composições, mapa financeiro e medições. Os indicadores de actividade global ainda não estão ligados a uma API de resumo; por isso não mostramos números inventados.</p></div>
           </section>
 
-          <section className="metric-grid" aria-label="Indicadores">
-            {metrics.map((metric) => (
-              <article className="metric-card" key={metric.label}>
-                <div className="metric-heading"><span>{metric.label}</span><span className="metric-icon">{metric.icon}</span></div>
-                <div className="metric-value">{metric.value}</div>
-                <p>{metric.note}</p>
-              </article>
-            ))}
+          <section className="dashboard-quicklinks" aria-label="Acessos rápidos">
+            <Link href="/obras"><span className="quick-icon">▤</span><span><strong>Obras e EAP</strong><small>Criar e abrir projectos</small></span><span className="quick-arrow">↗</span></Link>
+            <Link href="/recursos"><span className="quick-icon">◫</span><span><strong>Recursos</strong><small>Preços e fornecedores</small></span><span className="quick-arrow">↗</span></Link>
+            <Link href="/simulador"><span className="quick-icon">∑</span><span><strong>Simulador</strong><small>Testar cenários de custos</small></span><span className="quick-arrow">↗</span></Link>
           </section>
 
-          <section className="section-heading">
-            <div><p className="eyebrow">ESTRUTURA DO PRODUTO</p><h2>Módulos principais</h2></div>
-            <span className="section-count">4 módulos prioritários</span>
+          <section className="section-heading dashboard-section-heading">
+            <div><p className="eyebrow">CENTRO DE FUNCIONALIDADES</p><h2>O que já pode acompanhar</h2></div><span className="section-count">6 áreas do produto</span>
+          </section>
+          <section className="module-grid dashboard-module-grid">
+            {modules.map((module) => <article className="module-card dashboard-module-card" key={module.number}>
+              <div className="module-top"><span className="module-number">{module.number}</span><span className="module-arrow">{module.icon}</span></div>
+              <div className="dashboard-module-status"><span className={module.status === "Disponível" ? "status-dot" : "status-dot status-dot-warn"} />{module.status}</div>
+              <h3>{module.title}</h3><p>{module.description}</p>
+              <Link className="dashboard-module-link" href={module.href}>{module.action} <span>→</span></Link>
+            </article>)}
           </section>
 
-          <section className="module-grid" id="obras">
-            {modules.map((module) => (
-              <article className="module-card" key={module.number}>
-                <div className="module-top"><span className="module-number">{module.number}</span><span className="module-arrow">↗</span></div>
-                <h3>{module.title}</h3>
-                <p>{module.description}</p>
-                <div className="module-footer"><span className="status-dot" />{module.status}</div>
-              </article>
-            ))}
-          </section>
-
-          <section className="bottom-grid">
-            <article className="panel-card" id="orcamentos">
-              <div className="panel-title"><div><h2>Próximas etapas</h2><p>Ordem de implementação recomendada</p></div><span className="subtle-icon">☷</span></div>
+          <section className="bottom-grid dashboard-bottom-grid">
+            <article className="panel-card">
+              <div className="panel-title"><div><h2>Fluxo recomendado para uma obra</h2><p>Siga esta sequência para obter um orçamento útil</p></div><span className="subtle-icon">☷</span></div>
               <ol className="task-list">
-                <li><span className="task-check done">✓</span><div><strong>Definir âmbito e arquitectura</strong><small>Concluído · documentação base</small></div></li>
-                <li><span className="task-check done">✓</span><div><strong>Criar o motor de cálculo</strong><small>Concluído · funções e testes iniciais</small></div></li>
-                <li><span className="task-check done">✓</span><div><strong>Implementar acesso e permissões</strong><small>Concluído · registo e sessão inicial</small></div></li>
-                <li><span className="task-check">4</span><div><strong>Concluir gestão de obras e EAP</strong><small>Interface completa e medições com histórico</small></div></li>
+                <li><span className="task-check done">1</span><div><strong>Criar a obra</strong><small>Cliente, localização, datas e moeda</small></div></li>
+                <li><span className="task-check done">2</span><div><strong>Estruturar a EAP</strong><small>Capítulos, actividades e serviços finais</small></div></li>
+                <li><span className="task-check done">3</span><div><strong>Registar recursos e composições</strong><small>Preços próprios e coeficientes técnicos</small></div></li>
+                <li><span className="task-check">4</span><div><strong>Preparar o mapa financeiro</strong><small>Premissas, coeficiente K e revisão do orçamento</small></div></li>
+                <li><span className="task-check">5</span><div><strong>Acompanhar a execução</strong><small>Medições e, futuramente, custos reais</small></div></li>
               </ol>
+              <Link className="dashboard-text-link" href="/obras">Ir para as obras →</Link>
             </article>
-            <article className="panel-card calculation-card" id="recursos">
-              <div className="panel-title"><div><h2>Princípio de cálculo</h2><p>Transparência em cada orçamento</p></div><span className="subtle-icon">∑</span></div>
-              <div className="formula-row"><span>Custo directo</span><strong>+</strong><span>Custo indirecto</span></div>
-              <div className="formula-divider" />
-              <div className="formula-row"><span>Encargos gerais</span><strong>+</strong><span>Lucro</span></div>
-              <div className="formula-divider" />
-              <div className="formula-row"><span>Imposto configurado</span><strong>=</strong><span className="formula-result">Preço de venda</span></div>
-              <p className="calculation-note">As taxas serão parametrizadas e validadas localmente. Nenhuma taxa legal é presumida pelo motor de cálculo.</p>
+            <article className="panel-card dashboard-roadmap">
+              <div className="panel-title"><div><h2>Em desenvolvimento</h2><p>Funcionalidades seguintes — não apresentadas como concluídas</p></div><span className="subtle-icon">⌁</span></div>
+              {nextSteps.map((step, index) => <div className="roadmap-item" key={step.title}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{step.title}</strong><p>{step.description}</p></div></div>)}
             </article>
           </section>
 
-          <footer className="footer"><span>ObraCerta · Fundação de produto v0.1</span><span>Desenhado para o contexto operacional de Moçambique</span></footer>
+          <section className="dashboard-note"><strong>Importante sobre o estado actual</strong><p>A interface de medições permite criar rascunhos; a aprovação ainda não está implementada. O CSV de orçamento está disponível dentro de cada obra. Antes de usar em produção, é necessário confirmar a compilação, as migrações e os testes do ambiente publicado.</p></section>
+          <footer className="footer"><span>ObraCerta · Plataforma de orçamentação e controlo de obras</span><span>Contexto operacional de Moçambique · moeda base MZN</span></footer>
         </div>
       </section>
     </main>
