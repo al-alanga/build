@@ -19,7 +19,9 @@
 - [x] API inicial de criação, listagem, consulta e actualização de obras.
 - [x] API inicial de criação/listagem de itens EAP com validação do capítulo superior.
 - [ ] Interface CRUD completa e edição da hierarquia EDT/EAP.
-- [ ] Medições, revisões e histórico.
+- [x] Registo inicial de medições de execução com quantidade, período, preço unitário congelado e histórico.
+- [ ] Aprovação/rejeição de medições, edição controlada e autos de medição exportáveis.
+- [ ] Histórico completo de revisões das quantidades orçamentadas.
 - [x] Registar criação/actualização de obras e criação de itens EAP.
 - [ ] Completar auditoria de todas as operações críticas.
 
@@ -40,7 +42,8 @@
 - [ ] Exportação profissional PDF/Excel.
 
 ## Fase 4 — Execução e controlo
-- [ ] Quantidades executadas e autos de medição.
+- [x] Registo de quantidades executadas e comparação inicial entre orçamento e execução aprovada.
+- [ ] Autos de medição formais, aprovação, trabalhos a mais/menos e revisões contratuais.
 - [ ] Compras, compromissos e custos reais.
 - [ ] Trabalhos a mais/menos e revisões contratuais.
 - [ ] Fluxo de caixa e análise de desvios.
