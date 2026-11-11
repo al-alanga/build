@@ -42,6 +42,13 @@ enum RevisionStatus {
   SUPERSEDED
 }
 
+enum MeasurementStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
 model Company {
   id          String       @id @default(cuid())
   name        String
@@ -95,6 +102,7 @@ model Project {
   company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   items       WorkItem[]
   revisions   BudgetRevision[]
+  measurements ExecutionMeasurement[]
 
   @@unique([companyId, code])
   @@index([companyId, status])
@@ -114,6 +122,7 @@ model WorkItem {
   parent      WorkItem?  @relation("WorkItemTree", fields: [parentId], references: [id], onDelete: Restrict)
   children    WorkItem[] @relation("WorkItemTree")
   compositions CostComposition[]
+  measurements ExecutionMeasurement[]
 
   @@unique([projectId, code])
   @@index([projectId, parentId, sortOrder])
@@ -224,4 +233,26 @@ model AuditLog {
 
   @@index([companyId, createdAt])
   @@index([entityType, entityId])
+}
+
+model ExecutionMeasurement {
+  id                    String            @id @default(cuid())
+  projectId             String
+  workItemId            String
+  createdByUserId       String?
+  measuredOn            DateTime          @default(now())
+  periodStart           DateTime?
+  periodEnd             DateTime?
+  quantity              Decimal           @db.Decimal(18, 4)
+  unitPriceAtMeasurement Decimal          @default(0) @db.Decimal(18, 4)
+  amount                Decimal           @default(0) @db.Decimal(18, 2)
+  status                MeasurementStatus @default(DRAFT)
+  notes                 String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  project               Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workItem              WorkItem          @relation(fields: [workItemId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, measuredOn])
+  @@index([workItemId, status])
 }
