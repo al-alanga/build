@@ -51,7 +51,7 @@ export async function POST(request:Request,{params}:RouteContext){
     const result=await prisma.$transaction(async tx=>{
       const project=await tx.project.findFirst({where:{id:projectId,companyId:context.companyId},select:{id:true}});
       if(!project)throw new Error("PROJECT_NOT_FOUND");
-      const items=await tx.workItem.findMany({where:{projectId},include:{children:{select:{id:true}},compositions:{orderBy:{version:"desc"},take:1,include:{lines:{select:{coefficient:true,unitPriceAtSave:true}}}}}});
+      const items=await tx.workItem.findMany({where:{projectId},include:{children:{select:{id:true}},compositions:{orderBy:{version:"desc"},take:1,include:{lines:{select:{coefficient:true,unitPriceAtSave:true,resource:{select:{code:true,name:true}}}}}}}});
       const leaves=items.filter(item=>item.children.length===0);
       if(leaves.length===0)throw new Error("NO_BUDGET_ITEMS");
       const missing=leaves.filter(item=>!item.compositions[0]||item.compositions[0].lines.length===0);
