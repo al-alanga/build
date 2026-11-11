@@ -6,7 +6,7 @@ const metrics = [
 ];
 
 const modules = [
-  { number: "01", title: "Obras e EAP", description: "Organize capítulos, actividades e serviços numa estrutura hierárquica.", status: "Fundação definida" },
+  { number: "01", title: "Obras e EAP", description: "Organize capítulos, actividades e serviços numa estrutura hierárquica.", status: "Módulo em construção" },
   { number: "02", title: "Recursos e fornecedores", description: "Registe os seus materiais, mão de obra, equipamentos e cotações.", status: "Modelo inicial criado" },
   { number: "03", title: "Composições de custos", description: "Calcule custos unitários a partir de coeficientes técnicos e preços próprios.", status: "Motor inicial criado" },
   { number: "04", title: "Orçamento e coeficiente K", description: "Separe custos directos, indirectos, encargos, lucro e impostos configuráveis.", status: "Cálculo inicial criado" },
@@ -23,7 +23,7 @@ export default function HomePage() {
         <div className="workspace-label">ESPAÇO DE TRABALHO</div>
         <nav className="navigation" aria-label="Navegação principal">
           <a className="nav-item active" href="#visao-geral"><span>▦</span> Visão geral</a>
-          <a className="nav-item" href="#obras"><span>▤</span> Obras <em>Em breve</em></a>
+          <a className="nav-item" href="/obras"><span>▤</span> Obras</a>
           <a className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</a>
           <a className="nav-item" href="#orcamentos"><span>▧</span> Orçamentos <em>Em breve</em></a>
           <a className="nav-item" href="#recursos"><span>◫</span> Recursos <em>Em breve</em></a>
