@@ -24,6 +24,7 @@ export default function HomePage() {
         <nav className="navigation" aria-label="Navegação principal">
           <a className="nav-item active" href="#visao-geral"><span>▦</span> Visão geral</a>
           <a className="nav-item" href="#obras"><span>▤</span> Obras <em>Em breve</em></a>
+          <a className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</a>
           <a className="nav-item" href="#orcamentos"><span>▧</span> Orçamentos <em>Em breve</em></a>
           <a className="nav-item" href="#recursos"><span>◫</span> Recursos <em>Em breve</em></a>
           <a className="nav-item" href="#relatorios"><span>▥</span> Relatórios <em>Em breve</em></a>
@@ -55,7 +56,7 @@ export default function HomePage() {
               <h1>Visão geral</h1>
               <p className="welcome-copy">Uma base organizada para orçamentar e acompanhar os custos das suas obras.</p>
             </div>
-            <button className="primary-button" type="button" disabled title="Será activado quando o módulo de obras estiver implementado">＋ Nova obra <span className="button-soon">em breve</span></button>
+            <a className="primary-button" href="/simulador">Abrir simulador de custos <span className="button-soon">experimental</span></a>
           </section>
 
           <section className="notice" aria-label="Estado da aplicação">
