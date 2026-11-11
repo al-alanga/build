@@ -6,7 +6,17 @@ import { registerSchema } from "@/lib/auth-validation";
 
 export const runtime = "nodejs";
 
+function sameOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try { return new URL(origin).host === new URL(request.url).host; } catch { return false; }
+}
+
 export async function POST(request: Request) {
+  if (!sameOrigin(request)) return NextResponse.json({ error: "Origem não permitida." }, { status: 403 });
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
+    return NextResponse.json({ error: "O servidor ainda não está configurado para criar sessões." }, { status: 503 });
+  }
   let body: unknown;
   try { body = await request.json(); } catch {
     return NextResponse.json({ error: "Corpo JSON inválido." }, { status: 400 });
