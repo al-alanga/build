@@ -3,6 +3,7 @@ import { getAuthenticatedContext } from "@/lib/auth";
 import { hasPermission } from "@/lib/authorization";
 import { createResourceSchema } from "@/lib/resource-validation";
 import { createResource, listResources } from "@/lib/resources";
+import type { ResourceType } from "@prisma/client";
 
 function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
   if (typeRaw && !allowed.includes(typeRaw)) return NextResponse.json({ error: "Tipo de recurso inválido." }, { status: 400 });
   const data = await listResources(context.companyId, {
     search: url.searchParams.get("q") ?? undefined,
-    type: typeRaw as "MATERIAL" | "LABOUR" | "EQUIPMENT" | "SUBCONTRACT" | "OTHER" | null ?? undefined,
+    type: typeRaw ? (typeRaw as ResourceType) : undefined,
     activeOnly: url.searchParams.get("active") === "true",
   });
   return NextResponse.json({ data });
