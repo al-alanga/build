@@ -3,7 +3,7 @@ import { z } from "zod";
 const optionalTrimmed = (max: number) =>
   z.string().trim().max(max).optional().or(z.literal("").transform(() => undefined));
 
-export const createProjectSchema = z.object({
+export const projectFieldsSchema = z.object({
   code: z.string().trim().min(1, "O código da obra é obrigatório.").max(40),
   name: z.string().trim().min(3, "O nome deve ter pelo menos 3 caracteres.").max(160),
   clientName: optionalTrimmed(160),
@@ -11,7 +11,9 @@ export const createProjectSchema = z.object({
   currency: z.string().trim().length(3).default("MZN"),
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
-}).superRefine((data, ctx) => {
+});
+
+export const createProjectSchema = projectFieldsSchema.superRefine((data, ctx) => {
   if (data.startDate && data.endDate && data.endDate < data.startDate) {
     ctx.addIssue({
       code: "custom",
