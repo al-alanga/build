@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { calculateBudget } from "@/lib/costing";
+import "../simulator.css";
 
 const money = new Intl.NumberFormat("pt-MZ", {
   style: "currency",
