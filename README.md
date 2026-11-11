@@ -54,9 +54,13 @@ npm run dev
 - Painel: `/`
 - Simulador de orçamento: `/simulador` (valores temporários, não persistidos)
 - Acesso / registo: `/acesso`
+- Recursos e fornecedores: `/recursos`
 - Obras e EAP: `/obras` (página de âmbito; API inicial protegida disponível)
 - API de obras: `GET/POST /api/projects`; `GET/PATCH /api/projects/:projectId`
 - API EAP: `GET/POST /api/projects/:projectId/items`
+- API de fornecedores: `GET/POST /api/suppliers`
+- API de recursos: `GET/POST /api/resources`
+- API de composições: `GET/POST /api/projects/:projectId/items/:itemId/compositions`
 - API de sessão: `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`
 - Verificação básica da aplicação: `/api/health`
 
@@ -66,3 +70,4 @@ npm run dev
 - [Arquitectura](docs/architecture.md)
 - [Modelo de domínio](docs/domain-model.md)
 - [Roteiro de desenvolvimento](docs/roadmap.md)
+- [Fórmulas do orçamento e coeficiente K](docs/budget-formulas.md)
