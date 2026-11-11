@@ -2,12 +2,16 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedContext } from "@/lib/auth";
 import { hasPermission } from "@/lib/authorization";
 import { updateProject } from "@/lib/projects";
-import { createProjectSchema } from "@/lib/validation";
+import { projectFieldsSchema } from "@/lib/validation";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-const updateSchema = createProjectSchema.partial().extend({
+const updateSchema = projectFieldsSchema.partial().extend({
   status: z.enum(["DRAFT", "BUDGETING", "APPROVED", "IN_PROGRESS", "ON_HOLD", "COMPLETED", "CANCELLED"]).optional(),
+}).superRefine((data, ctx) => {
+  if (data.startDate && data.endDate && data.endDate < data.startDate) {
+    ctx.addIssue({ code: "custom", path: ["endDate"], message: "A data de conclusão não pode anteceder a data de início." });
+  }
 });
 function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
