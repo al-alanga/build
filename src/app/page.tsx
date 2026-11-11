@@ -26,7 +26,7 @@ export default function HomePage() {
           <a className="nav-item" href="/obras"><span>▤</span> Obras</a>
           <a className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</a>
           <a className="nav-item" href="#orcamentos"><span>▧</span> Orçamentos <em>Em breve</em></a>
-          <a className="nav-item" href="#recursos"><span>◫</span> Recursos <em>Em breve</em></a>
+          <a className="nav-item" href="/recursos"><span>◫</span> Recursos e fornecedores</a>
           <a className="nav-item" href="#relatorios"><span>▥</span> Relatórios <em>Em breve</em></a>
         </nav>
         <div className="sidebar-bottom">
@@ -61,7 +61,7 @@ export default function HomePage() {
 
           <section className="notice" aria-label="Estado da aplicação">
             <div className="notice-icon">i</div>
-            <div><strong>Bem-vindo à fundação do ObraCerta</strong><p>O projecto já tem a estrutura inicial, o modelo de dados e o motor de cálculo. Autenticação e ligação à base de dados ainda estão por implementar; os indicadores abaixo não representam dados reais.</p></div>
+            <div><strong>Bem-vindo à fundação do ObraCerta</strong><p>Já existem registo, sessão autenticada e APIs iniciais para obras, EAP, fornecedores e recursos. Configure a base de dados antes de usar dados reais; os indicadores abaixo ainda não estão ligados aos registos persistidos.</p></div>
           </section>
 
           <section className="metric-grid" aria-label="Indicadores">
@@ -96,8 +96,8 @@ export default function HomePage() {
               <ol className="task-list">
                 <li><span className="task-check done">✓</span><div><strong>Definir âmbito e arquitectura</strong><small>Concluído · documentação base</small></div></li>
                 <li><span className="task-check done">✓</span><div><strong>Criar o motor de cálculo</strong><small>Concluído · funções e testes iniciais</small></div></li>
-                <li><span className="task-check">3</span><div><strong>Implementar acesso e empresas</strong><small>Próximo · autenticação e permissões</small></div></li>
-                <li><span className="task-check">4</span><div><strong>Construir gestão de obras e EAP</strong><small>Após o módulo de acesso</small></div></li>
+                <li><span className="task-check done">✓</span><div><strong>Implementar acesso e permissões</strong><small>Concluído · registo e sessão inicial</small></div></li>
+                <li><span className="task-check">4</span><div><strong>Concluir gestão de obras e EAP</strong><small>Interface completa e medições com histórico</small></div></li>
               </ol>
             </article>
             <article className="panel-card calculation-card" id="recursos">
