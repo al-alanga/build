@@ -49,8 +49,16 @@ npx prisma migrate dev --name init
 npm run dev
 ```
 
+## Interface inicial
+
+- Painel: `/`
+- Simulador de orçamento: `/simulador` (valores temporários, não persistidos)
+- Entrada do módulo de obras: `/obras` (ainda sem cadastro persistente)
+- Verificação básica da aplicação: `/api/health`
+
 ## Documentação
 
+- [Segurança e isolamento multiempresa](docs/security.md)
 - [Arquitectura](docs/architecture.md)
 - [Modelo de domínio](docs/domain-model.md)
 - [Roteiro de desenvolvimento](docs/roadmap.md)
