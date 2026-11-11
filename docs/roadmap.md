@@ -6,16 +6,22 @@
 - [x] Criar motor de cálculo isolado.
 - [x] Adicionar testes unitários iniciais.
 - [x] Adicionar workflow de CI para validar schema, testes, lint e build automaticamente.
-- [ ] Instalar dependências e confirmar resultados do CI.
+- [ ] Instalar dependências e confirmar resultados do CI (execução ainda não verificada).
 
 ## Fase 1 — Acesso e obras
-- [ ] Autenticação segura e recuperação de conta.
+- [x] Registo, login e logout com cookie de sessão assinado.
+- [ ] Verificação de email, recuperação de conta e limitação de tentativas.
 - [x] Definir matriz inicial de permissões por papel.
 - [x] Criar esquemas de validação para dados de obra e itens EAP.
-- [ ] Empresas, membros, papéis e permissões no servidor.
-- [ ] CRUD de obras e hierarquia EDT/EAP.
+- [x] Criar empresa e associação OWNER no registo inicial.
+- [x] Resolver papel actual no servidor e aplicar permissões às APIs de obras/EAP.
+- [ ] Gestão de membros e troca de empresa activa.
+- [x] API inicial de criação, listagem, consulta e actualização de obras.
+- [x] API inicial de criação/listagem de itens EAP com validação do capítulo superior.
+- [ ] Interface CRUD completa e edição da hierarquia EDT/EAP.
 - [ ] Medições, revisões e histórico.
-- [ ] Auditoria de operações críticas.
+- [x] Registar criação/actualização de obras e criação de itens EAP.
+- [ ] Completar auditoria de todas as operações críticas.
 
 ## Fase 2 — Recursos e orçamento
 - [ ] Fornecedores, cotações e preços introduzidos pela empresa.
