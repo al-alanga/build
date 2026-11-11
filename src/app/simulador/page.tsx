@@ -1,3 +1,4 @@
+import Link from "next/link";
 "use client";
 
 import { useMemo, useState } from "react";
@@ -47,11 +48,11 @@ export default function SimulatorPage() {
   return (
     <main className="simulator-shell">
       <header className="simulator-header">
-        <a className="brand" href="/">
+        <Link className="brand" href="/">
           <span className="brand-mark">O</span>
           <span><strong>ObraCerta</strong><small>SIMULADOR DE CUSTOS</small></span>
-        </a>
-        <a className="back-link" href="/">← Voltar ao painel</a>
+        </Link>
+        <Link className="back-link" href="/">← Voltar ao painel</Link>
       </header>
       <div className="simulator-content">
         <p className="eyebrow">FERRAMENTA DE TRABALHO · VERSÃO INICIAL</p>
@@ -101,7 +102,7 @@ export default function SimulatorPage() {
             <div className="formula-hint"><strong>Como é calculado?</strong><p>Base de custos = custos directos + indirectos. Os encargos gerais são aplicados à base; o lucro incide sobre a base com encargos; o imposto é aplicado ao preço antes do imposto.</p></div>
           </section>
         </div>
-        <footer className="footer simulator-footer"><span>ObraCerta · Simulação local</span><a href="/">Voltar ao painel principal</a></footer>
+        <footer className="footer simulator-footer"><span>ObraCerta · Simulação local</span><Link href="/">Voltar ao painel principal</Link></footer>
       </div>
     </main>
   );
