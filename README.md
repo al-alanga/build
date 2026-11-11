@@ -34,7 +34,7 @@ Esta stack é a base inicial e poderá ser ajustada antes de funcionalidades cr�
 
 ## Estado actual
 
-Fundação inicial: documentação de produto, modelo de dados e motor de cálculo de custos. A aplicação ainda não está pronta para produção. Autenticação, persistência, testes de integração, autorização e implantação devem ser concluídos antes de uso com dados reais.
+Fundação e primeiro fluxo de acesso implementados: registo de conta/empresa, início e fim de sessão, sessão assinada, permissões iniciais e APIs protegidas para obras e itens EAP. A aplicação ainda não está pronta para produção; faltam controlos contra abuso, recuperação/verificação de conta, migrações aplicadas, testes de integração e validação de implantação.
 
 ## Desenvolvimento local
 
@@ -43,7 +43,7 @@ Requer Node.js LTS e PostgreSQL.
 ```bash
 npm install
 cp .env.example .env
-# configure DATABASE_URL no .env
+# configure DATABASE_URL e SESSION_SECRET no .env
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
@@ -53,7 +53,11 @@ npm run dev
 
 - Painel: `/`
 - Simulador de orçamento: `/simulador` (valores temporários, não persistidos)
-- Entrada do módulo de obras: `/obras` (ainda sem cadastro persistente)
+- Acesso / registo: `/acesso`
+- Obras e EAP: `/obras` (página de âmbito; API inicial protegida disponível)
+- API de obras: `GET/POST /api/projects`; `GET/PATCH /api/projects/:projectId`
+- API EAP: `GET/POST /api/projects/:projectId/items`
+- API de sessão: `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`
 - Verificação básica da aplicação: `/api/health`
 
 ## Documentação
