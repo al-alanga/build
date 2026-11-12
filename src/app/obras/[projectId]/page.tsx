@@ -38,6 +38,9 @@ export default function ProjectDetailPage() {
   const [parentId, setParentId] = useState("");
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState({ code: "", name: "", description: "", unit: "", quantity: "0" });
+  const [editingProject, setEditingProject] = useState(false);
+  const [projectSaving, setProjectSaving] = useState(false);
+  const [projectValues, setProjectValues] = useState({ code: "", name: "", clientName: "", location: "", status: "DRAFT", startDate: "", endDate: "" });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -83,6 +86,47 @@ export default function ProjectDetailPage() {
     for (const item of items) if (!visited.has(item.id)) output.push({ item, depth: 0 });
     return output;
   }, [items]);
+
+  function startProjectEditing() {
+    if (!project) return;
+    setProjectValues({
+      code: project.code, name: project.name, clientName: project.clientName || "",
+      location: project.location || "", status: project.status,
+      startDate: project.startDate ? project.startDate.slice(0, 10) : "",
+      endDate: project.endDate ? project.endDate.slice(0, 10) : "",
+    });
+    setEditingProject(true);
+    setMessage("");
+    setIsError(false);
+  }
+
+  async function saveProject(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setProjectSaving(true); setMessage(""); setIsError(false);
+    try {
+      const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: projectValues.code.trim(), name: projectValues.name.trim(),
+          clientName: projectValues.clientName.trim(), location: projectValues.location.trim(),
+          status: projectValues.status,
+          startDate: projectValues.startDate || undefined,
+          endDate: projectValues.endDate || undefined,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Não foi possível actualizar a obra.");
+      setProject(result.data);
+      setEditingProject(false);
+      setMessage("Dados da obra actualizados com sucesso.");
+    } catch (e) {
+      setIsError(true);
+      setMessage(e instanceof Error ? e.message : "Erro ao actualizar a obra.");
+    } finally {
+      setProjectSaving(false);
+    }
+  }
 
   function startEditing(item: WorkItem) {
     setEditingItemId(item.id);
@@ -157,8 +201,21 @@ export default function ProjectDetailPage() {
       ) : <>
         <section className="detail-heading">
           <div><span className="detail-kicker">OBRA {project.code}</span><h1>{project.name}</h1><p>{project.clientName || "Cliente não indicado"} · {project.location || "Localização não indicada"}</p></div>
-          <span className={`detail-status detail-status-${project.status.toLowerCase()}`}>{statusLabels[project.status] || project.status}</span>
+          <div className="detail-heading-actions"><span className={`detail-status detail-status-${project.status.toLowerCase()}`}>{statusLabels[project.status] || project.status}</span><button type="button" className="detail-secondary" onClick={startProjectEditing}>Editar dados da obra</button></div>
         </section>
+        {editingProject && <section className="detail-card">
+          <div className="detail-card-heading"><div><h2>Editar dados da obra</h2><p>Actualize a identificação, o cliente, as datas e o estado do projecto.</p></div></div>
+          <form className="detail-form" onSubmit={saveProject}>
+            <label>Código<input required maxLength={40} value={projectValues.code} onChange={e => setProjectValues(v => ({...v, code:e.target.value}))} /></label>
+            <label>Nome da obra<input required minLength={3} maxLength={160} value={projectValues.name} onChange={e => setProjectValues(v => ({...v, name:e.target.value}))} /></label>
+            <label>Cliente<input maxLength={160} value={projectValues.clientName} onChange={e => setProjectValues(v => ({...v, clientName:e.target.value}))} /></label>
+            <label>Localização<input maxLength={160} value={projectValues.location} onChange={e => setProjectValues(v => ({...v, location:e.target.value}))} /></label>
+            <label>Estado<select value={projectValues.status} onChange={e => setProjectValues(v => ({...v, status:e.target.value}))}>{Object.entries(statusLabels).map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+            <label>Data de início<input type="date" value={projectValues.startDate} onChange={e => setProjectValues(v => ({...v, startDate:e.target.value}))} /></label>
+            <label>Conclusão prevista<input type="date" min={projectValues.startDate || undefined} value={projectValues.endDate} onChange={e => setProjectValues(v => ({...v, endDate:e.target.value}))} /></label>
+            <div className="detail-form-actions"><button type="button" className="detail-secondary" onClick={() => setEditingProject(false)}>Cancelar</button><button type="submit" className="detail-primary" disabled={projectSaving}>{projectSaving ? "A guardar…" : "Guardar dados da obra"}</button></div>
+          </form>
+        </section>}
         {message && <p className={isError ? "detail-alert error" : "detail-alert"} role="status">{message}{isError && message.includes("Sessão") ? <> <Link href="/acesso">Iniciar sessão</Link></> : null}</p>}
         <div className="detail-budget-action"><Link href={`/obras/${projectId}/orcamento`}>Abrir mapa financeiro do orçamento →</Link><Link href={`/obras/${projectId}/medicoes`}>Controlar medições de execução →</Link></div>
         <section className="detail-stats">
