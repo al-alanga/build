@@ -36,6 +36,8 @@ export default function ProjectDetailPage() {
   const [unit, setUnit] = useState("un");
   const [quantity, setQuantity] = useState("0");
   const [parentId, setParentId] = useState("");
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editValues, setEditValues] = useState({ code: "", name: "", description: "", unit: "", quantity: "0" });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -81,6 +83,42 @@ export default function ProjectDetailPage() {
     for (const item of items) if (!visited.has(item.id)) output.push({ item, depth: 0 });
     return output;
   }, [items]);
+
+  function startEditing(item: WorkItem) {
+    setEditingItemId(item.id);
+    setEditValues({ code: item.code, name: item.name, description: item.description || "", unit: item.unit || "", quantity: String(item.quantity) });
+    setMessage("");
+    setIsError(false);
+  }
+
+  async function saveItem(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingItemId) return;
+    setSaving(true); setMessage(""); setIsError(false);
+    try {
+      const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/items/${encodeURIComponent(editingItemId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: editValues.code.trim(),
+          name: editValues.name.trim(),
+          description: editValues.description.trim() || null,
+          unit: editValues.unit.trim() || null,
+          quantity: Number(editValues.quantity),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Não foi possível actualizar o item.");
+      setEditingItemId(null);
+      setMessage("Item da EAP actualizado e registado no histórico de auditoria.");
+      await load();
+    } catch (e) {
+      setIsError(true);
+      setMessage(e instanceof Error ? e.message : "Erro ao actualizar o item.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function submitItem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -141,7 +179,14 @@ export default function ProjectDetailPage() {
             <div className="detail-form-actions"><button type="button" className="detail-secondary" onClick={() => setShowForm(false)}>Cancelar</button><button type="submit" className="detail-primary" disabled={saving}>{saving ? "A guardar…" : "Guardar item"}</button></div>
           </form>}
           {orderedItems.length === 0 ? <div className="detail-empty"><span>▤</span><strong>A EAP ainda está vazia</strong><p>Adicione o primeiro capítulo ou serviço para começar a estruturar o orçamento.</p>{!showForm && <button type="button" className="detail-secondary" onClick={() => setShowForm(true)}>Adicionar primeiro item</button>}</div> :
-            <div className="detail-table-wrap"><table className="detail-table"><thead><tr><th>Código</th><th>Capítulo / serviço</th><th>Unidade</th><th>Quantidade</th></tr></thead><tbody>{orderedItems.map(({item,depth}) => <tr key={item.id}><td>{item.code}</td><td><div className="detail-item-name" style={{paddingLeft:Math.min(depth,8)*20}}><Link className="detail-composition-link" href={`/obras/${projectId}/itens/${item.id}/composicao`}><strong>{item.name}</strong></Link>{item.description && <small>{item.description}</small>}<Link className="detail-open-composition" href={`/obras/${projectId}/itens/${item.id}/composicao`}>Composição de custos →</Link></div></td><td>{item.unit || "—"}</td><td>{Number(item.quantity).toLocaleString("pt-MZ",{maximumFractionDigits:4})}</td></tr>)}</tbody></table></div>}
+            <div className="detail-table-wrap"><table className="detail-table"><thead><tr><th>Código</th><th>Capítulo / serviço</th><th>Unidade</th><th>Quantidade</th><th>Acções</th></tr></thead><tbody>{orderedItems.map(({item,depth}) => <tr key={item.id}><td>{item.code}</td><td><div className="detail-item-name" style={{paddingLeft:Math.min(depth,8)*20}}><Link className="detail-composition-link" href={`/obras/${projectId}/itens/${item.id}/composicao`}><strong>{item.name}</strong></Link>{item.description && <small>{item.description}</small>}<Link className="detail-open-composition" href={`/obras/${projectId}/itens/${item.id}/composicao`}>Composição de custos →</Link></div>{editingItemId === item.id && <form className="detail-form" onSubmit={saveItem}>
+              <label>Código<input required maxLength={40} value={editValues.code} onChange={e => setEditValues(v => ({...v, code:e.target.value}))} /></label>
+              <label>Nome<input required minLength={2} maxLength={200} value={editValues.name} onChange={e => setEditValues(v => ({...v, name:e.target.value}))} /></label>
+              <label>Unidade<input maxLength={24} value={editValues.unit} onChange={e => setEditValues(v => ({...v, unit:e.target.value}))} placeholder="m³, m², kg, h, un…" /></label>
+              <label>Quantidade<input type="number" min="0" step="0.0001" required value={editValues.quantity} onChange={e => setEditValues(v => ({...v, quantity:e.target.value}))} /></label>
+              <label className="detail-wide">Descrição<textarea rows={2} maxLength={2000} value={editValues.description} onChange={e => setEditValues(v => ({...v, description:e.target.value}))} /></label>
+              <div className="detail-form-actions"><button type="button" className="detail-secondary" onClick={() => setEditingItemId(null)}>Cancelar</button><button type="submit" className="detail-primary" disabled={saving}>{saving ? "A guardar…" : "Guardar alterações"}</button></div>
+            </form>}</td><td>{item.unit || "—"}</td><td>{Number(item.quantity).toLocaleString("pt-MZ",{maximumFractionDigits:4})}</td><td><button type="button" className="detail-secondary" onClick={() => editingItemId === item.id ? setEditingItemId(null) : startEditing(item)}>{editingItemId === item.id ? "Fechar edição" : "Editar"}</button></td></tr>)}</tbody></table></div>}
         </section>
         <p className="detail-note">As alterações são guardadas na base de dados e registadas para auditoria. Os custos unitários e o mapa financeiro serão ligados numa etapa seguinte.</p>
       </>}
