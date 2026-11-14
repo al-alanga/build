@@ -22,7 +22,8 @@
 - [x] Registo inicial de medições de execução com preço unitário congelado e histórico.
 - [x] API de transição de revisão de orçamento: submeter, aprovar e rejeitar com permissões no servidor.
 - [x] Bloqueio de transições inválidas e registo de auditoria das decisões de revisão.
-- [ ] Aprovação/rejeição de medições, edição controlada e autos de medição exportáveis.
+- [x] Submissão/aprovação/rejeição de medições com permissões, auditoria e controlo de quantidade acumulada aprovada.
+- [ ] Edição controlada e autos de medição exportáveis.
 - [ ] Histórico completo de revisões das quantidades orçamentadas.
 - [ ] Completar auditoria de todas as operações críticas.
 
@@ -45,7 +46,8 @@
 
 ## Fase 4 — Execução e controlo
 - [x] Registo de quantidades executadas e comparação inicial entre orçamento e execução aprovada.
-- [ ] Autos de medição formais, aprovação, trabalhos a mais/menos e revisões contratuais.
+- [x] Fluxo inicial de aprovação/rejeição de medições e controlo de quantidade orçamentada.
+- [ ] Autos de medição formais, trabalhos a mais/menos e revisões contratuais.
 - [ ] Compras, compromissos e custos reais.
 - [ ] Fluxo de caixa e análise de desvios.
 

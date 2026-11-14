@@ -29,6 +29,7 @@ export default function MedicoesPage() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [transitioningId, setTransitioningId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
@@ -77,6 +78,25 @@ export default function MedicoesPage() {
     } finally { setSaving(false); }
   }
 
+  async function transitionMeasurement(measurement: Measurement, action: "submit" | "approve" | "reject") {
+    const labels = { submit: "submeter", approve: "aprovar", reject: "rejeitar" };
+    const note = action === "reject" ? window.prompt("Motivo da rejeição (opcional):") ?? "" : "";
+    if (note.length > 2000) { setIsError(true); setMessage("O motivo deve ter no máximo 2000 caracteres."); return; }
+    if (!window.confirm("Confirma " + labels[action] + " esta medição?")) return;
+    setTransitioningId(measurement.id); setIsError(false); setMessage("");
+    try {
+      const response = await fetch("/api/projects/" + encodeURIComponent(projectId) + "/measurements/" + encodeURIComponent(measurement.id), {
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, note }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Não foi possível actualizar a medição.");
+      setMessage("Medição actualizada: " + result.data.status + ".");
+      await load();
+    } catch (error) {
+      setIsError(true); setMessage(error instanceof Error ? error.message : "Erro ao actualizar a medição.");
+    } finally { setTransitioningId(null); }
+  }
+
   const approved = data?.measurements.filter((m) => m.status === "APPROVED").length ?? 0;
   const drafts = data?.measurements.filter((m) => m.status === "DRAFT").length ?? 0;
 
@@ -86,7 +106,7 @@ export default function MedicoesPage() {
       <Link href={"/obras/" + projectId} className="measure-back">← Voltar à obra</Link>
     </header>
     {loading ? <p className="measure-state">A carregar medições…</p> : !data ? <section className="measure-alert error">{message}</section> : <>
-      <section className="measure-heading"><span>EXECUÇÃO · CONTROLO FÍSICO</span><h1>{data.project.name}</h1><p>Registe quantidades executadas e compare-as com o orçamento. As novas medições ficam em rascunho até existir um fluxo de aprovação.</p></section>
+      <section className="measure-heading"><span>EXECUÇÃO · CONTROLO FÍSICO</span><h1>{data.project.name}</h1><p>Registe quantidades executadas, submeta-as para validação e aprove apenas quantidades conformes com o orçamento.</p></section>
       {message && <p className={"measure-alert" + (isError ? " error" : "")} role="status">{message}</p>}
       <section className="measure-stats">
         <div><span>Serviços orçamentados</span><strong>{data.items.length}</strong></div>
@@ -115,9 +135,9 @@ export default function MedicoesPage() {
       </section>
       <section className="measure-card">
         <header><h2>Histórico de medições</h2><p>Os registos mantêm o preço unitário usado na data da medição.</p></header>
-        {data.measurements.length === 0 ? <p className="measure-empty">Ainda não existem medições.</p> : <div className="measure-history">{data.measurements.map((m) => <article key={m.id}><div><strong>{m.workItem.code} — {m.workItem.name}</strong><small>{new Intl.DateTimeFormat("pt-MZ", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(m.measuredOn))} · {m.status === "DRAFT" ? "Rascunho" : m.status === "APPROVED" ? "Aprovada" : m.status}</small>{m.notes && <p>{m.notes}</p>}</div><div className="measure-value"><strong>{Number(m.quantity).toLocaleString("pt-MZ")} {m.workItem.unit || ""}</strong><span>{fmt(Number(m.amount))}</span></div></article>)}</div>}
+        {data.measurements.length === 0 ? <p className="measure-empty">Ainda não existem medições.</p> : <div className="measure-history">{data.measurements.map((m) => <article key={m.id}><div><strong>{m.workItem.code} — {m.workItem.name}</strong><small>{new Intl.DateTimeFormat("pt-MZ", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(m.measuredOn))} · {m.status === "DRAFT" ? "Rascunho" : m.status === "APPROVED" ? "Aprovada" : m.status}</small>{m.notes && <p>{m.notes}</p>}</div><div className="measure-value"><strong>{Number(m.quantity).toLocaleString("pt-MZ")} {m.workItem.unit || ""}</strong><span>{fmt(Number(m.amount))}</span><div className="measure-row-actions">{m.status === "DRAFT" && <button type="button" className="measure-secondary" disabled={transitioningId !== null} onClick={() => void transitionMeasurement(m, "submit")}>{transitioningId === m.id ? "A actualizar…" : "Submeter"}</button>}{m.status === "SUBMITTED" && <><button type="button" className="measure-primary" disabled={transitioningId !== null} onClick={() => void transitionMeasurement(m, "approve")}>{transitioningId === m.id ? "A actualizar…" : "Aprovar"}</button><button type="button" className="measure-secondary" disabled={transitioningId !== null} onClick={() => void transitionMeasurement(m, "reject")}>Rejeitar</button></>}</div></div></article>)}</div>}
       </section>
-      <p className="measure-footnote">Limitação desta versão: a criação de medições está disponível, mas aprovação, edição e anulação com fluxo auditável serão implementadas numa etapa seguinte.</p>
+      <p className="measure-footnote">As decisões de submissão, aprovação e rejeição são registadas na auditoria. A aprovação não permite ultrapassar a quantidade orçamentada; alterações contratuais devem ser formalizadas separadamente.</p>
     </>}
   </main>;
 }
