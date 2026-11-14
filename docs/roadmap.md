@@ -28,9 +28,12 @@
 ## Fase 2 — Recursos e orçamento
 - [x] Registo/listagem inicial de fornecedores e preços introduzidos pela empresa.
 - [x] Recursos com preços próprios, moeda e custos de importação/transporte/outros.
+- [x] API de actualização de recursos e fornecedores com validação, isolamento por empresa e auditoria.
+- [x] Desactivação/reactivação de recursos sem apagar referências históricas.
 - [x] Primeira versão de composições de custo unitário com preço congelado por versão.
 - [x] Motor isolado de cálculo de custo base, encargos gerais, lucro, imposto configurável e coeficiente K.
 - [ ] Cotações com histórico, produtividade e custos horários completos.
+- [ ] Interface completa para editar todos os campos de recursos e fornecedores (API PATCH já disponível).
 - [ ] Integrar composições e motor de cálculo nas revisões de orçamento persistidas.
 - [ ] Fluxo de aprovação imutável de revisões.
 

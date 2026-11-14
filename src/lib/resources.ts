@@ -118,3 +118,36 @@ export async function createResource(
     return resource;
   });
 }
+
+
+export async function updateResource(companyId: string, userId: string, resourceId: string, input: import("@/lib/resource-validation").UpdateResourceInput) {
+ return prisma.$transaction(async tx => {
+  const before=await tx.resource.findFirst({where:{id:resourceId,companyId}});
+  if(!before)throw new Error("RESOURCE_NOT_FOUND");
+  if(input.supplierId){const supplier=await tx.supplier.findFirst({where:{id:input.supplierId,companyId},select:{id:true}});if(!supplier)throw new Error("SUPPLIER_NOT_FOUND");}
+  const data: Prisma.ResourceUpdateInput={
+   ...(input.code!==undefined?{code:input.code}:{}),...(input.name!==undefined?{name:input.name}:{}),
+   ...(input.type!==undefined?{type:input.type}:{}),...(input.unit!==undefined?{unit:input.unit}:{}),
+   ...(input.unitPrice!==undefined?{unitPrice:new Prisma.Decimal(input.unitPrice)}:{}),
+   ...(input.currency!==undefined?{currency:input.currency}:{}),
+   ...(input.productivity!==undefined?{productivity:new Prisma.Decimal(input.productivity)}:{}),
+   ...(input.importCost!==undefined?{importCost:new Prisma.Decimal(input.importCost)}:{}),
+   ...(input.transportCost!==undefined?{transportCost:new Prisma.Decimal(input.transportCost)}:{}),
+   ...(input.otherCost!==undefined?{otherCost:new Prisma.Decimal(input.otherCost)}:{}),
+   ...(input.isActive!==undefined?{isActive:input.isActive}:{}),
+   ...(input.supplierId!==undefined?{supplier:input.supplierId?{connect:{id:input.supplierId}}:{disconnect:true}:{})
+  };
+  const updated=await tx.resource.update({where:{id:before.id},data});
+  await tx.auditLog.create({data:{companyId,userId,action:input.isActive===false?"RESOURCE_DEACTIVATED":input.isActive===true?"RESOURCE_REACTIVATED":"RESOURCE_UPDATED",entityType:"Resource",entityId:updated.id,beforeData:{code:before.code,name:before.name,unitPrice:before.unitPrice.toString(),isActive:before.isActive} satisfies Prisma.InputJsonValue,afterData:{code:updated.code,name:updated.name,unitPrice:updated.unitPrice.toString(),isActive:updated.isActive} satisfies Prisma.InputJsonValue}});
+  return updated;
+ });
+}
+export async function updateSupplier(companyId:string,userId:string,supplierId:string,input:import("@/lib/resource-validation").UpdateSupplierInput){
+ return prisma.$transaction(async tx=>{
+  const before=await tx.supplier.findFirst({where:{id:supplierId,companyId}});
+  if(!before)throw new Error("SUPPLIER_NOT_FOUND");
+  const updated=await tx.supplier.update({where:{id:before.id},data:input});
+  await tx.auditLog.create({data:{companyId,userId,action:"SUPPLIER_UPDATED",entityType:"Supplier",entityId:updated.id,beforeData:{name:before.name,nuit:before.nuit,email:before.email} satisfies Prisma.InputJsonValue,afterData:{name:updated.name,nuit:updated.nuit,email:updated.email} satisfies Prisma.InputJsonValue}});
+  return updated;
+ });
+}
