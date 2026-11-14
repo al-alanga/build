@@ -6,11 +6,11 @@
 - [x] Criar motor de cálculo isolado.
 - [x] Adicionar testes unitários iniciais.
 - [x] Adicionar workflow de CI para validar schema, testes, lint e build automaticamente.
-- [ ] Instalar dependências e confirmar resultados do CI (execução ainda não verificada).
+- [ ] Instalar dependências e confirmar resultados do CI (execução local ainda não verificada).
 
-## Fase 1 — Acesso e obras
+## Fase 1 — Acesso, obras e aprovações
 - [x] Registo, login e logout com cookie de sessão assinado.
-- [ ] Verificação de email, recuperação de conta e limitação de tentativas.
+- [ ] Verificação de email, recuperação de conta e limitação distribuída de tentativas.
 - [x] Definir matriz inicial de permissões por papel.
 - [x] Criar esquemas de validação para dados de obra e itens EAP.
 - [x] Criar empresa e associação OWNER no registo inicial.
@@ -19,10 +19,11 @@
 - [x] API inicial de criação, listagem, consulta e actualização de obras.
 - [x] API inicial de criação/listagem de itens EAP com validação do capítulo superior.
 - [ ] Interface CRUD completa e edição da hierarquia EDT/EAP.
-- [x] Registo inicial de medições de execução com quantidade, período, preço unitário congelado e histórico.
+- [x] Registo inicial de medições de execução com preço unitário congelado e histórico.
+- [x] API de transição de revisão de orçamento: submeter, aprovar e rejeitar com permissões no servidor.
+- [x] Bloqueio de transições inválidas e registo de auditoria das decisões de revisão.
 - [ ] Aprovação/rejeição de medições, edição controlada e autos de medição exportáveis.
 - [ ] Histórico completo de revisões das quantidades orçamentadas.
-- [x] Registar criação/actualização de obras e criação de itens EAP.
 - [ ] Completar auditoria de todas as operações críticas.
 
 ## Fase 2 — Recursos e orçamento
@@ -32,20 +33,20 @@
 - [x] Motor isolado de cálculo de custo base, encargos gerais, lucro, imposto configurável e coeficiente K.
 - [ ] Cotações com histórico, produtividade e custos horários completos.
 - [ ] Integrar composições e motor de cálculo nas revisões de orçamento persistidas.
-- [ ] Fluxo de aprovação imutável de revisões.
+- [x] Fluxo de submissão, aprovação/rejeição e substituição de revisão aprovada anterior.
+- [ ] Garantir que todas as saídas e a interface reflectem o estado de aprovação.
 
 ## Fase 3 — Adaptação operacional a Moçambique
 - [ ] MZN como moeda base e moedas alternativas quando necessário.
 - [ ] Parâmetros fiscais configuráveis com vigência e tipo de operação.
 - [ ] Encargos laborais/seguros configuráveis e validados localmente.
 - [ ] Custos de importação, despacho, transporte e logística.
-- [ ] Exportação profissional PDF/Excel.
+- [ ] Exportação profissional PDF/Excel; CSV existente deve ser validado com dados reais anonimizados.
 
 ## Fase 4 — Execução e controlo
 - [x] Registo de quantidades executadas e comparação inicial entre orçamento e execução aprovada.
 - [ ] Autos de medição formais, aprovação, trabalhos a mais/menos e revisões contratuais.
 - [ ] Compras, compromissos e custos reais.
-- [ ] Trabalhos a mais/menos e revisões contratuais.
 - [ ] Fluxo de caixa e análise de desvios.
 
 ## Fase 5 — Evolução
@@ -60,3 +61,4 @@
 - Migrações e estratégia de backup/restauro testadas.
 - Verificação de cálculos por especialista de orçamentação e contabilista local.
 - Relatórios testados em PDF/Excel com dados reais anonimizados.
+- Revisões aprovadas imutáveis, com transições auditadas e permissões de aprovação separadas.
