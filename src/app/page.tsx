@@ -28,6 +28,7 @@ export default function HomePage() {
           <Link className="nav-item" href="/obras"><span>▤</span> Obras e EAP</Link>
           <Link className="nav-item" href="/recursos"><span>◫</span> Recursos e fornecedores</Link>
           <Link className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</Link>
+          <Link className="nav-item" href="/usuarios"><span>♙</span> Utilizadores</Link>
           <Link className="nav-item" href="/acesso"><span>↪</span> Conta e sessão</Link>
         </nav>
         <div className="sidebar-bottom">
