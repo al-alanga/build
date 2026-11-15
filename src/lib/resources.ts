@@ -135,7 +135,7 @@ export async function updateResource(companyId: string, userId: string, resource
    ...(input.transportCost!==undefined?{transportCost:new Prisma.Decimal(input.transportCost)}:{}),
    ...(input.otherCost!==undefined?{otherCost:new Prisma.Decimal(input.otherCost)}:{}),
    ...(input.isActive!==undefined?{isActive:input.isActive}:{}),
-   ...(input.supplierId!==undefined?{supplier:input.supplierId?{connect:{id:input.supplierId}}:{disconnect:true}:{})
+   ...(input.supplierId !== undefined ? { supplier: input.supplierId ? { connect: { id: input.supplierId } } : { disconnect: true } } : {})
   };
   const updated=await tx.resource.update({where:{id:before.id},data});
   await tx.auditLog.create({data:{companyId,userId,action:input.isActive===false?"RESOURCE_DEACTIVATED":input.isActive===true?"RESOURCE_REACTIVATED":"RESOURCE_UPDATED",entityType:"Resource",entityId:updated.id,beforeData:{code:before.code,name:before.name,unitPrice:before.unitPrice.toString(),isActive:before.isActive} satisfies Prisma.InputJsonValue,afterData:{code:updated.code,name:updated.name,unitPrice:updated.unitPrice.toString(),isActive:updated.isActive} satisfies Prisma.InputJsonValue}});
