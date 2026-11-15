@@ -40,3 +40,6 @@ export const updateResourceSchema = createResourceSchema.partial().extend({
 
 export type CreateSupplierInput = z.infer<typeof createSupplierSchema>;
 export type CreateResourceInput = z.infer<typeof createResourceSchema>;
+
+export type UpdateSupplierInput = z.infer<typeof updateSupplierSchema>;
+export type UpdateResourceInput = z.infer<typeof updateResourceSchema>;
