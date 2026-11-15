@@ -21,6 +21,7 @@ export default function UsuariosPage() {
           <Link className="nav-item" href="/recursos"><span>◫</span> Recursos e fornecedores</Link>
           <Link className="nav-item" href="/simulador"><span>∑</span> Simulador de custos</Link>
           <Link className="nav-item active" href="/usuarios"><span>♙</span> Utilizadores</Link>
+          <Link className="nav-item" href="/equipa"><span>♧</span> Equipa e permissões</Link>
           <Link className="nav-item" href="/conta"><span>◎</span> Conta e sessão</Link>
           <Link className="nav-item" href="/acesso"><span>↪</span> Entrar / registar</Link>
         </nav>
