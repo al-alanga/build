@@ -38,7 +38,7 @@ Fundação e primeiro fluxo de acesso implementados: registo de conta/empresa, i
 
 ## Desenvolvimento local
 
-Requer Node.js LTS e PostgreSQL.
+Requer Node.js LTS e PostgreSQL. Para testar com Supabase, consulte [`docs/supabase-setup.md`](docs/supabase-setup.md).
 
 ```bash
 npm install

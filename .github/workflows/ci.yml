@@ -28,6 +28,7 @@ jobs:
         run: npx prisma validate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/obracerta?schema=public
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/obracerta?schema=public
 
       - name: Run unit tests
         run: npm test
