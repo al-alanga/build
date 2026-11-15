@@ -1,21 +1,38 @@
 # Configurar Supabase para testar o ObraCerta
 
-O ObraCerta usa PostgreSQL através do Prisma. O Supabase fornece a base de dados PostgreSQL; a autenticação da aplicação continua a ser a autenticação própria do ObraCerta (não activar nem substituir por Supabase Auth nesta configuração).
+O ObraCerta usa PostgreSQL através do Prisma. O projecto Supabase de testes já configurado é `build` (ref: `rihpdhgryyzgknbfyyql`, região `eu-west-1`). A autenticação da aplicação continua a ser a autenticação própria do ObraCerta; não foi substituída por Supabase Auth.
 
-## 1. Criar o projecto
+## Estado actual do projecto de teste
 
-1. Crie um projecto em https://supabase.com/dashboard.
-2. Guarde a palavra-passe da base de dados num gestor de segredos.
-3. Em **Project Settings → Database → Connection string**, obtenha:
-   - `DATABASE_URL`: preferencialmente o Session Pooler (porta 5432) para o servidor da aplicação;
-   - `DIRECT_URL`: ligação directa para executar migrações. Se a rede não suportar IPv6, use o Session Pooler.
-4. Copie os valores para o ambiente local `.env` (a partir de `.env.example`) e para os Environment Variables do serviço onde a aplicação está publicada.
+- 12 tabelas criadas a partir do esquema Prisma, incluindo empresas, utilizadores, obras, itens de trabalho, fornecedores, recursos, orçamentos, auditoria e medições.
+- Duas migrações aplicadas no Supabase.
+- RLS activado nas 12 tabelas.
+- Permissões de tabela revogadas para os papéis API `anon` e `authenticated`; a aplicação deve aceder à base de dados no servidor através de Prisma, nunca directamente do browser.
+- A base de dados está vazia, pronta para dados de teste.
 
-Não coloque as URLs reais, a palavra-passe ou `SESSION_SECRET` no GitHub nem em código client-side. Use apenas variáveis de ambiente de servidor.
+Este é um ambiente de teste. Não introduza dados pessoais ou financeiros reais.
 
-## 2. Validar a ligação
+## 1. Obter as URLs de ligação
 
-Depois de configurar as variáveis, execute:
+No Supabase, abra o projecto `build` → **Connect** ou **Project Settings → Database → Connection string**.
+
+1. Copie a ligação **Session pooler** (porta 5432) e use-a como `DATABASE_URL`.
+2. Copie a ligação directa (porta 5432) como `DIRECT_URL`, se a rede suportar IPv6. Caso contrário, use a ligação Session pooler também para `DIRECT_URL`.
+3. Substitua os valores de exemplo do ficheiro `.env.example`; não altere nem publique as URLs com credenciais reais.
+
+Exemplo de formato (não é uma credencial funcional):
+
+```dotenv
+DATABASE_URL="postgresql://postgres.PROJECT_REF:DB_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres?schema=public"
+DIRECT_URL="postgresql://postgres:DB_PASSWORD@db.PROJECT_REF.supabase.co:5432/postgres?schema=public"
+SESSION_SECRET="um-segredo-aleatorio-com-pelo-menos-32-caracteres"
+```
+
+A palavra-passe da base de dados só pode ser obtida/alterada por alguém com acesso ao painel Supabase. Não a partilhe no chat, GitHub ou browser.
+
+## 2. Testar localmente
+
+Na pasta do repositório, crie `.env` a partir de `.env.example` e preencha as três variáveis com os valores reais. Depois:
 
 ```bash
 npm install
@@ -23,22 +40,25 @@ npx prisma generate
 npm run dev
 ```
 
-Abra `/api/health`. Uma ligação válida responde com `database: "connected"`; uma ligação indisponível responde com HTTP 503 sem expor detalhes sensíveis.
+Abra `http://localhost:3000/api/health`. Uma ligação correcta deve devolver `database: "connected"`; uma falha de ligação devolve HTTP 503 sem expor detalhes da base de dados.
 
-## 3. Atenção às migrações existentes
+Em seguida, teste `/acesso`, o registo e login, criação de empresa/obra, recursos e orçamento. Use apenas contas e dados fictícios.
 
-O repositório tem actualmente a migração de medições de execução, mas não contém uma migração inicial que crie todas as tabelas do esquema. Por isso, **não execute ainda `npx prisma migrate deploy` numa base de dados Supabase vazia**: a migração de medições depende das tabelas `Project` e `WorkItem` já existirem.
+## 3. Testar no deploy (por exemplo, Vercel)
 
-Para uma base de dados de teste nova, reveja primeiro o esquema e gere uma migração inicial completa, depois teste-a numa base vazia antes de aplicar migrações subsequentes. `prisma db push` pode ser usado apenas como atalho temporário num projecto descartável de desenvolvimento; não o use como estratégia de migração de produção.
+No painel do serviço de deploy, abra as variáveis de ambiente do projecto e adicione `DATABASE_URL`, `DIRECT_URL` e `SESSION_SECRET` para o ambiente de Preview/Teste. Faça um novo deploy e abra `/api/health` no domínio desse deploy.
 
-## 4. Preparar o primeiro teste
+- Nunca use a chave `service_role` no browser.
+- Nunca coloque segredos em variáveis com prefixo `NEXT_PUBLIC_`.
+- Não configure produção com estas credenciais de teste.
 
-- Use um projecto Supabase dedicado a testes, sem dados reais.
-- Crie um `SESSION_SECRET` aleatório com pelo menos 32 caracteres.
-- Registe uma conta de teste na página `/acesso`.
-- Verifique criação de empresa, login, criação de obra, recursos e orçamento.
-- Não exponha a chave `service_role` no browser. Esta configuração não precisa dessa chave.
+## 4. Migrações — importante
 
-## Limite desta alteração
+A estrutura foi criada directamente no Supabase através do conector. O histórico de migrações do Supabase não equivale automaticamente ao histórico interno `_prisma_migrations` do Prisma. Por isso, **não execute `npx prisma migrate deploy` contra esta base de dados antes de alinhar/baselinar o histórico do Prisma**; caso contrário, a migração inicial pode tentar criar tabelas que já existem.
 
-Esta documentação e a verificação de saúde da base de dados preparam a aplicação para Supabase. Não criam um projecto Supabase nem configuram segredos de deploy automaticamente; isso exige acesso à conta Supabase e ao ambiente de publicação.
+Para os primeiros testes funcionais, use a estrutura actual e não execute novas migrações. Antes de evoluir o esquema, prepare e teste o processo de baselining/migrações do Prisma numa base de dados descartável.
+
+## 5. Segurança
+
+RLS está activado em todas as tabelas públicas e os papéis API `anon` e `authenticated` não têm permissões directas nas tabelas. O acesso previsto para estes testes é feito no servidor através da ligação PostgreSQL usada pelo Prisma. As políticas RLS específicas por empresa/utilizador ainda não foram implementadas; por isso, este ambiente serve para testes controlados, não para produção nem para exposição pública.
+
