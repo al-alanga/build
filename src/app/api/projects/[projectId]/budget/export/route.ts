@@ -30,6 +30,15 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: "Obra não encontrada." }, { status: 404 });
   }
 
+  const latestRevision = await prisma.budgetRevision.findFirst({
+    where: { projectId },
+    orderBy: { revisionNumber: "desc" },
+    select: {
+      revisionNumber: true, status: true, createdAt: true, directCost: true, indirectCost: true,
+      overheadRate: true, profitRate: true, taxRate: true, sellingPrice: true,
+    },
+  });
+
   const items = await prisma.workItem.findMany({
     where: { projectId },
     orderBy: [{ sortOrder: "asc" }, { code: "asc" }],
@@ -110,7 +119,38 @@ export async function GET(_request: Request, { params }: RouteContext) {
     }
   }
 
-  records.push([], ["TOTAL DOS CUSTOS DIRECTOS", "", "", "", "", "", directCost]);
+  records.push([], ["TOTAL DOS CUSTOS DIRECTOS — EAP ACTUAL", "", "", "", "", "", directCost]);
+  if (latestRevision) {
+    const direct = Number(latestRevision.directCost);
+    const indirect = Number(latestRevision.indirectCost);
+    const overheadRate = Number(latestRevision.overheadRate);
+    const profitRate = Number(latestRevision.profitRate);
+    const taxRate = Number(latestRevision.taxRate);
+    const base = direct + indirect;
+    const overheadAmount = base * overheadRate;
+    const afterOverhead = base + overheadAmount;
+    const profitAmount = afterOverhead * profitRate;
+    const beforeTax = afterOverhead + profitAmount;
+    const taxAmount = Number(latestRevision.sellingPrice) - beforeTax;
+    records.push(
+      [],
+      ["RESUMO DA ÚLTIMA REVISÃO GUARDADA (SNAPSHOT)"],
+      ["Revisão", latestRevision.revisionNumber],
+      ["Estado", latestRevision.status],
+      ["Data de criação", latestRevision.createdAt.toISOString()],
+      ["Custo directo na revisão", direct],
+      ["Custos indirectos na revisão", indirect],
+      ["Encargos gerais (%)", overheadRate * 100],
+      ["Valor dos encargos gerais", overheadAmount],
+      ["Lucro (%)", profitRate * 100],
+      ["Valor do lucro", profitAmount],
+      ["Imposto configurado (%)", taxRate * 100],
+      ["Imposto implícito no preço guardado", taxAmount],
+      ["Preço de venda guardado", Number(latestRevision.sellingPrice)],
+      ["Coeficiente K (preço antes de imposto / custo directo)", direct > 0 ? beforeTax / direct : ""],
+      ["Nota", "O resumo é a fotografia da revisão guardada; os custos directos da EAP acima são recalculados com as composições actuais."]
+    );
+  }
   const csv = "\uFEFF" + records.map((record) => record.map(csvCell).join(";")).join("\r\n");
   const safeCode = project.code.replace(/[^a-zA-Z0-9_-]/g, "_") || "obra";
   return new Response(csv, {
