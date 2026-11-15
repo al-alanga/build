@@ -6,6 +6,7 @@ import "./orcamento.css";
 type BudgetRow={id:string;code:string;name:string;unit:string|null;quantity:number;compositionVersion:number|null;unitCost:number;directTotal:number;lines:{code:string;name:string;type:string;unit:string;coefficient:number;unitPrice:number;total:number}[]};
 type Pricing={directCost:number;indirectCost:number;costBase:number;overheadAmount:number;costAfterOverhead:number;profitAmount:number;sellingPriceBeforeTax:number;taxAmount:number;sellingPrice:number;kCoefficient:number};
 type Revision={id:string;revisionNumber:number;status:string;directCost:string|number;indirectCost:string|number;overheadRate:string|number;profitRate:string|number;taxRate:string|number;sellingPrice:string|number;createdAt:string;assumptions:unknown};
+type RevisionAction="submit"|"approve"|"reject";
 const pct=(n:number)=>String((n*100).toLocaleString("pt-MZ",{maximumFractionDigits:2}))+"%";
 export default function BudgetPage(){
  const {projectId}=useParams<{projectId:string}>();
@@ -19,6 +20,7 @@ export default function BudgetPage(){
  const [notes,setNotes]=useState("");
  const [loading,setLoading]=useState(true);
  const [saving,setSaving]=useState(false);
+ const [transitioningId,setTransitioningId]=useState<string|null>(null);
  const [message,setMessage]=useState("");
  const [error,setError]=useState(false);
  const [lastPricing,setLastPricing]=useState<Pricing|null>(null);
@@ -33,6 +35,23 @@ export default function BudgetPage(){
  const direct=rows.reduce((sum,row)=>sum+row.directTotal,0);
  const indirectValue=Number(indirect)||0, overheadValue=Number(overhead)||0, profitValue=Number(profit)||0,taxValue=Number(tax)||0;
  const costBase=direct+indirectValue, overheadAmount=costBase*overheadValue, afterOverhead=costBase+overheadAmount, profitAmount=afterOverhead*profitValue, beforeTax=afterOverhead+profitAmount, taxAmount=beforeTax*taxValue, selling=beforeTax+taxAmount;
+ async function transitionRevision(revision:Revision,action:RevisionAction){
+  const labels:Record<RevisionAction,string>={submit:"submeter",approve:"aprovar",reject:"rejeitar"};
+  const note=action==="reject"?window.prompt("Indique o motivo da rejeição (opcional):")??"": "";
+  if(action==="reject"&&note.length>2000){setError(true);setMessage("O motivo deve ter no máximo 2000 caracteres.");return;}
+  if(!window.confirm("Confirma "+labels[action]+" a revisão v"+revision.revisionNumber+"?"))return;
+  setTransitioningId(revision.id);setError(false);setMessage("");
+  try{
+   const response=await fetch("/api/projects/"+encodeURIComponent(projectId)+"/budget/"+encodeURIComponent(revision.id),{
+    method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,note})
+   });
+   const result=await response.json();
+   if(!response.ok)throw new Error(result.error||"Não foi possível actualizar a revisão.");
+   setMessage("Revisão v"+revision.revisionNumber+" actualizada: "+result.data.status+".");
+   await load();
+  }catch(e){setError(true);setMessage(e instanceof Error?e.message:"Erro ao actualizar a revisão.");}
+  finally{setTransitioningId(null);}
+ }
  async function createRevision(e:FormEvent<HTMLFormElement>){
   e.preventDefault();setSaving(true);setError(false);setMessage("");
   try{const response=await fetch("/api/projects/"+encodeURIComponent(projectId)+"/budget",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({indirectCost:indirectValue,overheadRate:overheadValue,profitRate:profitValue,taxRate:taxValue,notes})});const result=await response.json();if(!response.ok)throw new Error(result.error||"Não foi possível guardar a revisão.");setLastPricing(result.data.pricing);setMessage("Revisão v"+result.data.revision.revisionNumber+" guardada como rascunho.");await load();}
@@ -59,7 +78,7 @@ export default function BudgetPage(){
     </form>
    </section>
    {lastPricing&&<section className="budget-card"><h2>Resultado da última gravação</h2><p>Preço de venda: <strong>{fmt(lastPricing.sellingPrice)}</strong> · K: <strong>{lastPricing.kCoefficient.toLocaleString("pt-MZ",{maximumFractionDigits:4})}</strong></p></section>}
-   <section className="budget-card"><header className="budget-card-head"><div><h2>Histórico de revisões</h2><p>Cada gravação cria uma revisão nova; as anteriores são preservadas.</p></div></header>{revisions.length===0?<div className="budget-empty">Ainda não existem revisões guardadas.</div>:<div className="budget-history">{revisions.map(r=><article key={r.id}><div><strong>Revisão v{r.revisionNumber}</strong><small>{new Intl.DateTimeFormat("pt-MZ",{dateStyle:"medium",timeZone:"UTC"}).format(new Date(r.createdAt))} · {r.status==="DRAFT"?"Rascunho":r.status}</small></div><strong>{fmt(Number(r.sellingPrice))}</strong></article>)}</div>}</section>
+   <section className="budget-card"><header className="budget-card-head"><div><h2>Histórico de revisões</h2><p>Submeta rascunhos para aprovação. Apenas utilizadores com permissão de aprovação podem aprovar ou rejeitar.</p></div></header>{revisions.length===0?<div className="budget-empty">Ainda não existem revisões guardadas.</div>:<div className="budget-history">{revisions.map(r=><article key={r.id}><div><strong>Revisão v{r.revisionNumber}</strong><small>{new Intl.DateTimeFormat("pt-MZ",{dateStyle:"medium",timeZone:"UTC"}).format(new Date(r.createdAt))} · {r.status==="DRAFT"?"Rascunho":r.status==="SUBMITTED"?"Submetida":r.status==="APPROVED"?"Aprovada":r.status==="REJECTED"?"Rejeitada":r.status==="SUPERSEDED"?"Substituída":r.status}</small><small>Preço: {fmt(Number(r.sellingPrice))}</small></div><div className="budget-revision-actions">{r.status==="DRAFT"&&<button type="button" className="budget-secondary" disabled={transitioningId!==null} onClick={()=>void transitionRevision(r,"submit")}>{transitioningId===r.id?"A actualizar…":"Submeter"}</button>}{r.status==="SUBMITTED"&&<><button type="button" className="budget-primary" disabled={transitioningId!==null} onClick={()=>void transitionRevision(r,"approve")}>{transitioningId===r.id?"A actualizar…":"Aprovar"}</button><button type="button" className="budget-secondary" disabled={transitioningId!==null} onClick={()=>void transitionRevision(r,"reject")}>Rejeitar</button></>}{r.status==="APPROVED"&&<span className="budget-approved">✓ Revisão activa</span>}</div></article>)}</div>}</section>
    <p className="budget-note">O cálculo utiliza apenas a última composição de cada item terminal. Os itens sem composição têm custo unitário zero e são assinalados no mapa; verifique todos os serviços antes de aprovar.</p>
   </>}
  </main>;
